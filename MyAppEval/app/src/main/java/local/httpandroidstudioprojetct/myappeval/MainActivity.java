@@ -25,16 +25,16 @@ public class MainActivity extends AppCompatActivity {
     private ListView lv;
 
     // URL to get contacts JSON
-    private static String url = "http://api.androidhive.info/contacts/";
+    private static String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-01-02";
 
-    ArrayList<HashMap<String, String>> contactList;
+    ArrayList<HashMap<String, String>> seismeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        contactList = new ArrayList<>();
+        seismeList = new ArrayList<>();
 
         lv = (ListView) findViewById(R.id.list);
 
@@ -71,35 +71,32 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
                     // Getting JSON Array node
-                    JSONArray contacts = jsonObj.getJSONArray("contacts");
+                    JSONArray seismee = jsonObj.getJSONArray("features");
 
-                    // looping through All Contacts
-                    for (int i = 0; i < contacts.length(); i++) {
-                        JSONObject c = contacts.getJSONObject(i);
+                    // looping through All Seismes
+                    for (int i = 0; i < seismee.length(); i++) {
+                        JSONObject eq = seismee.getJSONObject(i);
 
-                        String id = c.getString("id");
-                        String name = c.getString("name");
-                        String email = c.getString("email");
-                        String address = c.getString("address");
-                        String gender = c.getString("gender");
+                        JSONObject properties = eq.getJSONObject("properties");
 
-                        // Phone node is JSON Object
-                        JSONObject phone = c.getJSONObject("phone");
-                        String mobile = phone.getString("mobile");
-                        String home = phone.getString("home");
-                        String office = phone.getString("office");
+                        String mag = properties.getString("mag");
+                        String place = properties.getString("place");
+                        String update = properties.getString("updated");
+                        String time = properties.getString("time");
+
 
                         // tmp hash map for single contact
-                        HashMap<String, String> contact = new HashMap<>();
+                        HashMap<String, String> seisme = new HashMap<>();
 
                         // adding each child node to HashMap key => value
-                        contact.put("id", id);
-                        contact.put("name", name);
-                        contact.put("email", email);
-                        contact.put("mobile", mobile);
+
+                        seisme.put("mag", mag);
+                        seisme.put("place", place);
+                        seisme.put("update", update);
+                        seisme.put("time", time);
 
                         // adding contact to contact list
-                        contactList.add(contact);
+                        seismeList.add(seisme);
                     }
                 } catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());
@@ -141,10 +138,10 @@ public class MainActivity extends AppCompatActivity {
              * Updating parsed JSON data into ListView
              * */
             ListAdapter adapter = new SimpleAdapter(
-                    MainActivity.this, contactList,
-                    R.layout.list_item, new String[]{"name", "email",
-                    "mobile"}, new int[]{R.id.name,
-                    R.id.email, R.id.mobile});
+                    MainActivity.this, seismeList,
+                    R.layout.list_item, new String[]{"mag", "place", "update",
+                    "time"}, new int[]{R.id.mag,
+                    R.id.place, R.id.update, R.id.time});
 
             lv.setAdapter(adapter);
         }
