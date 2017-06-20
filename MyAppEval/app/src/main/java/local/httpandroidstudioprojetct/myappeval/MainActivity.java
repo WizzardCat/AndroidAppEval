@@ -14,8 +14,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog pDialog;
     private ListView lv;
+
 
     // URL to get contacts JSON
     private static String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-01-02";
@@ -81,8 +85,22 @@ public class MainActivity extends AppCompatActivity {
 
                         String mag = properties.getString("mag");
                         String place = properties.getString("place");
-                        String update = properties.getString("updated");
                         String time = properties.getString("time");
+                        String date = properties.getString("time");
+
+// Get place
+                        String distanceAndPlace[] = place.split("\\s");
+                        if (distanceAndPlace.length > 3) {
+                            place = distanceAndPlace[0] + " \n\n" + distanceAndPlace[1];
+                            for(int j = 3; j < distanceAndPlace.length; j++) {
+                                place = place + " " + distanceAndPlace[j];
+                            }
+                        }
+
+
+                        Long timeConvert = Long.parseLong(time);
+                        date = new SimpleDateFormat("dd/MM/yyyy").format(timeConvert);
+                        time = new SimpleDateFormat("HH:mm:ss").format(timeConvert);
 
 
                         // tmp hash map for single contact
@@ -92,10 +110,11 @@ public class MainActivity extends AppCompatActivity {
 
                         seisme.put("mag", mag);
                         seisme.put("place", place);
-                        seisme.put("update", update);
                         seisme.put("time", time);
+                        seisme.put("date", date);
 
-                        // adding contact to contact list
+
+                        // adding seism to seism list
                         seismeList.add(seisme);
                     }
                 } catch (final JSONException e) {
@@ -128,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
+
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
@@ -139,11 +159,9 @@ public class MainActivity extends AppCompatActivity {
              * */
             ListAdapter adapter = new SimpleAdapter(
                     MainActivity.this, seismeList,
-                    R.layout.list_item, new String[]{"mag", "place", "update",
-                    "time"}, new int[]{R.id.mag,
-                    R.id.place, R.id.update, R.id.time});
-
-            lv.setAdapter(adapter);
+                    R.layout.list_item, new String[]{"mag", "place", "date", "time"}, new int[]{R.id.mag,
+                    R.id.place, R.id.date, R.id.time});
+                    lv.setAdapter(adapter);
         }
 
     }
