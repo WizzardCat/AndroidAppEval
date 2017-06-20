@@ -1,10 +1,14 @@
 package local.httpandroidstudioprojetct.myappeval;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -20,6 +24,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import local.httpandroidstudioprojetct.myappeval.quakeApi.Feature;
+import local.httpandroidstudioprojetct.myappeval.quakeApi.Properties;
+
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = MainActivity.class.getSimpleName();
@@ -28,21 +35,25 @@ public class MainActivity extends AppCompatActivity {
     private ListView lv;
 
 
+
     // URL to get contacts JSON
     private static String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-01-02";
 
-    ArrayList<HashMap<String, String>> seismeList;
+
+    ArrayList<Feature> seismeList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        seismeList = new ArrayList<>();
+        seismeList = new  ArrayList<>();
 
         lv = (ListView) findViewById(R.id.list);
 
-        new GetContacts().execute();
+            new GetContacts().execute();
     }
 
     /**
@@ -86,12 +97,13 @@ public class MainActivity extends AppCompatActivity {
                         String mag = properties.getString("mag");
                         String place = properties.getString("place");
                         String time = properties.getString("time");
-                        String date = properties.getString("time");
+                        String url = properties.getString("url");
+
 
 // Get place
                         String distanceAndPlace[] = place.split("\\s");
                         if (distanceAndPlace.length > 3) {
-                            place = distanceAndPlace[0] + " \n\n" + distanceAndPlace[1];
+                            place = "To: \n" + distanceAndPlace[0] + " \n\nFrom: \n" + distanceAndPlace[1];
                             for(int j = 3; j < distanceAndPlace.length; j++) {
                                 place = place + " " + distanceAndPlace[j];
                             }
@@ -99,23 +111,25 @@ public class MainActivity extends AppCompatActivity {
 
 
                         Long timeConvert = Long.parseLong(time);
-                        date = new SimpleDateFormat("dd/MM/yyyy").format(timeConvert);
-                        time = new SimpleDateFormat("HH:mm:ss").format(timeConvert);
+                        //date = new SimpleDateFormat("dd/MM/yyyy").format(timeConvert);
+                        //time = new SimpleDateFormat("HH:mm:ss").format(timeConvert);
 
 
                         // tmp hash map for single contact
-                        HashMap<String, String> seisme = new HashMap<>();
+                        Properties mproperties = new Properties();
 
                         // adding each child node to HashMap key => value
 
-                        seisme.put("mag", mag);
-                        seisme.put("place", place);
-                        seisme.put("time", time);
-                        seisme.put("date", date);
+                        mproperties.setmMag(Double.parseDouble(mag));
+                        mproperties.setmPlace(place);
+                        mproperties.setmTime(Long.parseLong(time));
+                        mproperties.setmUrl(url);
 
+                        Feature feature = new Feature();
 
+                        feature.setmProperties(mproperties);
                         // adding seism to seism list
-                        seismeList.add(seisme);
+                        seismeList.add(feature);
                     }
                 } catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());
@@ -157,11 +171,14 @@ public class MainActivity extends AppCompatActivity {
             /**
              * Updating parsed JSON data into ListView
              * */
-            ListAdapter adapter = new SimpleAdapter(
-                    MainActivity.this, seismeList,
-                    R.layout.list_item, new String[]{"mag", "place", "date", "time"}, new int[]{R.id.mag,
-                    R.id.place, R.id.date, R.id.time});
-                    lv.setAdapter(adapter);
+//            ListAdapter adapter = new SimpleAdapter(
+//                    MainActivity.this, seismeList,
+//                    R.layout.list_item, new String[]{"mag", "place", "date", "time"}, new int[]{R.id.mag,
+//                    R.id.place, R.id.date, R.id.time});
+//                    lv.setAdapter(adapter);
+
+            final QuakeAdapter adapter = new QuakeAdapter(MainActivity.this,seismeList);
+            lv.setAdapter(adapter);
         }
 
     }
