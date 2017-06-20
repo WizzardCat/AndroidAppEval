@@ -77,8 +77,8 @@ public class QuakeAdapter extends ArrayAdapter<Feature> {
         Feature feature = getItem(position);
         viewHolder.mag.setText(""+feature.getProperties().getMag());
         viewHolder.place.setText(feature.getProperties().getPlace());
-        viewHolder.date.setText(""+feature.getProperties().getTime());
-        viewHolder.time.setText(""+feature.getProperties().getTime());
+        viewHolder.date.setText(""+feature.getProperties().getCustomDate());
+        viewHolder.time.setText(""+feature.getProperties().getCustomTime());
         viewHolder.url.setText(""+feature.getProperties().getUrl());
 
 

@@ -1,17 +1,11 @@
 package local.httpandroidstudioprojetct.myappeval;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -20,9 +14,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 import local.httpandroidstudioprojetct.myappeval.quakeApi.Feature;
 import local.httpandroidstudioprojetct.myappeval.quakeApi.Properties;
@@ -64,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
             // Showing progress dialog
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Please wait...");
@@ -71,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             pDialog.show();
 
         }
+
 
         @Override
         protected Void doInBackground(Void... arg0) {
@@ -96,11 +90,12 @@ public class MainActivity extends AppCompatActivity {
 
                         String mag = properties.getString("mag");
                         String place = properties.getString("place");
+
                         String time = properties.getString("time");
                         String url = properties.getString("url");
 
 
-// Get place
+                    // Get place
                         String distanceAndPlace[] = place.split("\\s");
                         if (distanceAndPlace.length > 3) {
                             place = "To: \n" + distanceAndPlace[0] + " \n\nFrom: \n" + distanceAndPlace[1];
@@ -110,11 +105,6 @@ public class MainActivity extends AppCompatActivity {
                         }
 
 
-                        Long timeConvert = Long.parseLong(time);
-                        //date = new SimpleDateFormat("dd/MM/yyyy").format(timeConvert);
-                        //time = new SimpleDateFormat("HH:mm:ss").format(timeConvert);
-
-
                         // tmp hash map for single contact
                         Properties mproperties = new Properties();
 
@@ -122,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
                         mproperties.setmMag(Double.parseDouble(mag));
                         mproperties.setmPlace(place);
+
                         mproperties.setmTime(Long.parseLong(time));
                         mproperties.setmUrl(url);
 

@@ -4,6 +4,9 @@ package local.httpandroidstudioprojetct.myappeval.quakeApi;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @SuppressWarnings("unused")
 public class Properties {
 
@@ -162,6 +165,18 @@ public class Properties {
 
     public String getUrl() {
         return mUrl;
+    }
+
+    public String getCustomDate(){
+
+      String date = new SimpleDateFormat("dd/MM/yyyy").format(getTime()).toString();
+        return date;
+    }
+
+    public String getCustomTime(){
+
+        String time = new SimpleDateFormat("HH:mm:ss").format(getTime()).toString();
+        return time;
     }
 
     public void setmMag(Double mMag) {
