@@ -12,9 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 import local.httpandroidstudioprojetct.myappeval.quakeApi.Feature;
 import local.httpandroidstudioprojetct.myappeval.quakeApi.Properties;
@@ -162,11 +161,6 @@ public class MainActivity extends AppCompatActivity {
             /**
              * Updating parsed JSON data into ListView
              * */
-//            ListAdapter adapter = new SimpleAdapter(
-//                    MainActivity.this, seismeList,
-//                    R.layout.list_item, new String[]{"mag", "place", "date", "time"}, new int[]{R.id.mag,
-//                    R.id.place, R.id.date, R.id.time});
-//                    lv.setAdapter(adapter);
 
             final QuakeAdapter adapter = new QuakeAdapter(MainActivity.this,seismeList);
             lv.setAdapter(adapter);
